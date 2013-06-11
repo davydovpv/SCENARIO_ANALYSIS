@@ -4,7 +4,8 @@ pkgL <- function(pckg){sapply(pckg, require, character.only=TRUE, quietly=TRUE)}
 pkgL(c(
 	"quantmod",
 	"RQuantLib",
-	"fields"
+	"fields",
+	"rgl"
 	))
 
 
