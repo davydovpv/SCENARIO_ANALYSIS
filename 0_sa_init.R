@@ -5,7 +5,8 @@ pkgL(c(
 	"quantmod",
 	"RQuantLib",
 	"fields",
-	"rgl"
+	"rgl",
+	"lubridate"
 	))
 
 
