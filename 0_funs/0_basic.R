@@ -3,45 +3,42 @@
 list.rm.null  <-  function(x.list){   # delele null/empty entries in a list
     x.list[unlist(lapply(x.list, length) != 0)]}
 
-############################# MATRIX #####################################################
-##########################################################################################
 normalit <- function(mmat, st, end){
     onezero <- (mmat - min(mmat))/(max(mmat)-min(mmat))
     st + onezero*(end-st)}
 
-
 ############################# TIME #######################################################
 ##########################################################################################
-time_match <- function(time){
-    if (is(time, "character") || is(time, "numeric")){
-        time <- as.POSIXct(as.character(time),format=timeDate::whichFormat(time))}
-    if (is(time, "timeSeries") || is(time, "xts") || is(time, "zoo")){
-        time=timeSeries::time(time)}
-    if (is(time, "timeDate") || is(time, "POSIXt") || is(time, "Date")) 
-        time <- as.character(time)
-    time}
-
-time_seq <- function(from=Sys.time(), to, by="day", cal = "UnitedStates", trading=TRUE){
+time_seq <- function(from, to, by="hour", rng=c(9,16), holiday=holidayNYSE(2013:2020), trading=TRUE){
     # by            * A number, taken to be in seconds.
     #               * A object of class 'difftime'
     #               * "sec", "min", "hour", "day", "DSTday", "week", "month", "year"
-    from    <- zoo::as.Date(time_match(from))
-    to      <- zoo::as.Date(time_match(to))
+    from    <- as.timeDate(from)
+    to      <- as.timeDate(to)
     temp    <- seq(from=from, to=to, by=by)
-    if(trading){
-        temp <- temp[RQuantLib::isBusinessDay(calendar=cal, dates=temp)]}
+    temp    <- temp[get(by)(temp)>=rng[1] & get(by)(temp)<=rng[2]]
+    if(trading){ temp <- temp[isBizday(temp, holiday)]}
     return(temp)}
 
-time_diff_days <- function(from, to, cal = "UnitedStates", trading=TRUE){
-    from    <- zoo::as.Date(time_match(from))
-    to      <- zoo::as.Date(time_match(to))
-    temp    <- seq(from=from, to=to, by="day")
-    if(trading){
-        temp <- temp[RQuantLib::isBusinessDay(calendar=cal, dates=temp)]
-        if(RQuantLib::isBusinessDay(calendar=cal, dates=from)){
-            length(temp)-1
-        }else{length(temp)}
-    } else{length(temp)-1}}
+time_diff <- function(from, to, by="hour", rng=c(9,16), holiday=holidayNYSE(2013:2020), trading=TRUE){
+    from    <- as.timeDate(from)
+    to      <- as.timeDate(to)
+    if(length(from)>1 && length(to)==1){
+        temp    <- seq(from=from[1], to=to, by=by)
+        temp    <- temp[get(by)(temp)>=rng[1] & get(by)(temp)<=rng[2]]
+        if(trading){ temp <- temp[isBizday(temp, holiday)]}
+        sapply(from,function(x){length(cut(temp, from=x, to=to))})
+    }else if(length(from)==1 && length(to)>1){
+        temp    <- seq(from=from, to=to[length(to)], by=by)
+        temp    <- temp[get(by)(temp)>=rng[1] & get(by)(temp)<=rng[2]]
+        if(trading){ temp <- temp[isBizday(temp, holiday)]}
+        sapply(to,function(x){length(cut(temp, from=from, to=x))})
+    }else if(length(from)==1 && length(to)==1){
+        temp    <- seq(from=from, to=to, by=by)
+        temp    <- temp[get(by)(temp)>=rng[1] & get(by)(temp)<=rng[2]]
+        if(trading){ temp <- temp[isBizday(temp, holiday)]}
+        length(temp)
+    } }
 
 ############################# PLOT #######################################################
 ##########################################################################################

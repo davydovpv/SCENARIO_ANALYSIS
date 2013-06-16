@@ -6,7 +6,8 @@ pkgL(c(
 	"RQuantLib",
 	"fields",
 	"rgl",
-	"lubridate"
+	"lubridate",
+	"timeSeries"
 	))
 
 
@@ -16,12 +17,7 @@ fun_fol <- paste0(dirname(sys.frame(1)$ofile),"/0_funs/")
 funL 	<- function(files, dir=fun_fol){sapply(paste0(dir,files), source)}
 funL(c(
 	"0_basic.R", 
-	"0_inst.R",
-	"1_p_eq_fut.R", 
-	"1_p_vanilla_eur.R", 
-	"3_core.R", 
-	"8_greeks.R", 
-	"9_main.R"
+	"0_inst.R"
 	))
 
 
@@ -29,3 +25,4 @@ funL(c(
 ############################ OTHER ######################################################
 #########################################################################################
 setwd(dirname(sys.frame(1)$ofile))
+Sys.setenv(TZ='GMT')

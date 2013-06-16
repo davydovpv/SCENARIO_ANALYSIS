@@ -69,9 +69,6 @@ main.aggregate <- function(ticker, nsd=3, step=0.001, nstd=1.96, plot=FALSE, add
 	return(FINALFUN)
 }
 
-
-
-
 find.extrema <- function(output, ticker, date, n=2){
 	stock.pars 	<- vaStockPars()
 	stock.par 	<- stock.pars[[which(sapply(stock.pars,s.ticker)==ticker)]]
